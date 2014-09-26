@@ -26,8 +26,8 @@ $blogPosts = array(
 
 $app->get('/blog', function () use ($blogPosts) {
     $output = '';
-    foreach ($blogPosts as $post) {
-        $output .= $post['title'];
+    foreach ($blogPosts as $i => $post) {
+        $output .= "<a href='/blog/".$i."'>".$post["title"]."</a>";
         $output .= '<br />';
     }
 
