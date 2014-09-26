@@ -5,6 +5,11 @@ require_once __DIR__.'/../vendor/autoload.php';
 $app = new Silex\Application();
 $app['debug'] = true;
 
+$app->get('/', function() {
+    return "<a href='/blog'>blog</a><br><br>"
+    	."Send me a message: <form method='post' action='/feedback'><input name='message' type='text'><input type='submit'></form>";
+});
+
 $app->get('/hello', function() {
     return 'Hello!';
 });
@@ -43,6 +48,16 @@ $app->get('/blog/{id}', function (Silex\Application $app, $id) use ($blogPosts) 
 
     return  "<h1>{$post['title']}</h1>".
             "<p>{$post['body']}</p>";
+});
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+$app->post('/feedback', function (Request $request) {
+    $message = $request->get('message');
+    mail('igrnd0@gmail.com', 'Pipirka Feedback', $message);
+
+    return new Response('You sent: <i>'.$message.'</i><br>Thank you for your feedback!', 201);
 });
 
 $app->run();
