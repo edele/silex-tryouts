@@ -104,4 +104,9 @@ $app->get('/name', function (Silex\Application $app) {
     return "You provided the name {$app->escape($name)}.";
 });
 
+$app->get('/name.json', function (Silex\Application $app) {
+    $name = $app['request']->get('name');
+    return $app->json(array('name' => $name));
+});
+
 $app->run();
