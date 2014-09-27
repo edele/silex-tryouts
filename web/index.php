@@ -8,6 +8,9 @@ require_once __DIR__.'/../vendor/autoload.php';
 $app = new Silex\Application();
 $app['debug'] = true;
 
+// define controllers for a blog
+$blog = $app['controllers_factory'];
+
 
 $app->get('/', function() {
     return "<a href='/blog'>blog</a><br><br>"
@@ -33,7 +36,7 @@ $blogPosts = array(
     ),
 );
 
-$app->get('/blog', function () use ($blogPosts) {
+$blog->get('/', function () use ($blogPosts) {
     $output = '';
     foreach ($blogPosts as $i => $post) {
         $output .= "<a href='/blog/".$i."'>".$post["title"]."</a>";
@@ -43,7 +46,7 @@ $app->get('/blog', function () use ($blogPosts) {
     return $output;
 });
 
-$app->get('/blog/{id}', function (Silex\Application $app, $id) use ($blogPosts) {
+$blog->get('/{id}', function (Silex\Application $app, $id) use ($blogPosts) {
     if (!isset($blogPosts[$id])) {
         $app->abort(404, "Post $id does not exist.");
     }
@@ -53,6 +56,8 @@ $app->get('/blog/{id}', function (Silex\Application $app, $id) use ($blogPosts) 
     return  "<h1>{$post['title']}</h1>".
             "<p>{$post['body']}</p>";
 });
+
+$app->mount('/blog', $blog);
 
 $app->post('/feedback', function (Request $request) {
     $message = $request->get('message');
