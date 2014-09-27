@@ -99,4 +99,9 @@ $app->get('/copy', function () {
     return  "You can copy files";
 });
 
+$app->get('/name', function (Silex\Application $app) {
+    $name = $app['request']->get('name');
+    return "You provided the name {$app->escape($name)}.";
+});
+
 $app->run();
