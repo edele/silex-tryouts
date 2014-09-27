@@ -1,9 +1,13 @@
 <?php
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 require_once __DIR__.'/../vendor/autoload.php';
 
 $app = new Silex\Application();
 $app['debug'] = true;
+
+
 
 $app->get('/', function() {
     return "<a href='/blog'>blog</a><br><br>"
@@ -50,14 +54,23 @@ $app->get('/blog/{id}', function (Silex\Application $app, $id) use ($blogPosts) 
             "<p>{$post['body']}</p>";
 });
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
 $app->post('/feedback', function (Request $request) {
     $message = $request->get('message');
     mail('igrnd0@gmail.com', 'Pipirka Feedback', $message);
 
     return new Response('You sent: <i>'.$message.'</i><br>Thank you for your feedback!', 201);
+});
+
+
+$app->error(function (\Exception $e, $code) {
+    switch ($code) {
+        case 404:
+            $message = 'The requested page could not be found.';
+            break;
+        default:
+            $message = 'We are sorry, but something went terribly wrong.';
+    }
+    return new Response($message);
 });
 
 $app->run();
